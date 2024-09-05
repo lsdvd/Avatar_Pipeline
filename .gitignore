@@ -10,23 +10,20 @@ temp/
 # Ignore all .env files
 .env
 
-# Ignore everything in the backup folder
-backup/
+# # Ignore everything in the intermediate_videos folder except the folder itself
+# /intermediate_videos/*
+# !/intermediate_videos/
 
-# Ignore everything in the intermediate_videos folder except the folder itself
-/intermediate_videos/*
-!/intermediate_videos/
+# # Ignore everything in the output folder except the folder itself
+# /output/*
+# !/output/
 
-# Ignore everything in the output folder except the folder itself
-/output/*
-!/output/
-
-# Ignore everything in the input folder except the samples subfolder and specific files
-/input/*
-!/input/
-!/input/samples/
-!/input/samples/sample_image.jpg
-!/input/samples/sample_audio(12s).mp3
+# # Ignore everything in the input folder except the samples subfolder and specific files
+# /input/*
+# !/input/
+# !/input/samples/
+# !/input/samples/sample_image.jpg
+# !/input/samples/sample_audio(12s).mp3
 
 # Ignore Windows Zone.Identifier files
 *Zone.Identifier
