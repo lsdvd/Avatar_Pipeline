@@ -14,7 +14,11 @@ TEMPLATE_IMAGE_PATH = config.get("SadTalker", "template_image")
 REF_VIDEO_PATH = config.get("SadTalker", "ref_video")
 OUTPUT_PATH = os.path.expanduser(config.get("SadTalker", "output_path"))
 
-def run_sadtalker(sadTalker_dir, input_audio_path, image_path=TEMPLATE_IMAGE_PATH, output_path=OUTPUT_PATH, expression_scale=EXPRESSION_SCALE, ref_blink=None, ref_head=None):
+# Template Image path on avatar_pipeline dir
+full_template_image_path = os.path.join(os.getcwd(), TEMPLATE_IMAGE_PATH)
+
+
+def run_sadtalker(sadTalker_dir, input_audio_path, image_path=full_template_image_path, output_path=OUTPUT_PATH, expression_scale=EXPRESSION_SCALE, ref_blink=None, ref_head=None):
     logger.info("Starting SadTalker processing")
 
     # Get command for setting CUDA environment
