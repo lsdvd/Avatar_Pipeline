@@ -16,55 +16,48 @@ OUTPUT_PATH = os.path.expanduser(config.get("SadTalker", "output_path"))
 
 def run_sadtalker(sadTalker_dir, input_audio_path, image_path=TEMPLATE_IMAGE_PATH, output_path=OUTPUT_PATH, expression_scale=EXPRESSION_SCALE, ref_blink=None, ref_head=None):
     logger.info("Starting SadTalker processing")
-    """
-    Run the SadTalker model with the given inputs using WSL.
-    
-    reference doc: https://github.com/OpenTalker/SadTalker/blob/main/docs/best_practice.md
-    configuration options:
-    --driven_audio: Path to the input audio file
-    --source_image: Path to the input image file
-    --result_dir: Output directory (default: ./results)
-    --still: Minimized head motion (default: False)
-    --preprocess full: Makes video full image (default: crop) # full is better for LivePortrait
-    --expression_scale: Expression scale factor (default: 1) # 1.1 is good
-    # reference Mode for Blinking and Head Pose:
-    --ref_eyeblink: video path(head). borrows eyeblink from this video    
-    --ref_pose: video path(head). borrows head pose from this video    
-    # noteworthy but not used:
-    --enhancer: not necessary for LivePortrait
-    --background_enhancer: not necessary for LivePortrait
-    """
 
-    # get command for setting cuda env
+    # Get command for setting CUDA environment
     cuda_env_command = helpers.get_cuda_env_path()
 
-    full_commands = [helpers.get_conda_source_command(), 
-                     cuda_env_command[0], cuda_env_command[1], 
-                     f"cd {sadTalker_dir}","pwd", "conda activate sadtalker",  "nvcc --version"]
+    # Get the conda source command dynamically
+    conda_source_command = helpers.get_conda_source_command()
 
-    # construct the command to run SadTalker
+    # Prepare the full commands to be executed in the shell
+    full_commands = [
+        conda_source_command,
+        cuda_env_command[0], 
+        cuda_env_command[1], 
+        f"cd {sadTalker_dir}",
+        "pwd",
+        "conda activate sadtalker", 
+        "nvcc --version"
+    ]
+
+    # Construct the SadTalker inference command
     inference_command = [
         "python",
         SADTALKER_SCRIPT,
-        "--driven_audio", f'"{input_audio_path}"',
-        "--source_image", f'"{image_path}"',
-        "--result_dir", f'"{output_path}"',
+        "--driven_audio", input_audio_path,
+        "--source_image", image_path,
+        "--result_dir", output_path,
         "--still",
-        "--preprocess", "full", # TODO: do crop and handle full video using external code(faster)
+        "--preprocess", "full",  # Using 'full' for better quality
         "--expression_scale", str(expression_scale)
     ]
-    # add ref_blink and ref_head if they are not None
+
+    # Add optional parameters if provided
     if ref_blink is not None:
         inference_command.extend(["--ref_eyeblink", ref_blink])
     if ref_head is not None:
         inference_command.extend(["--ref_pose", ref_head])
-    
-    # Join wsl_command into a single string
-    inference_command = " ".join(inference_command)
-    logger.info(inference_command)
-    
-    # Add the SadTalker command to the list of WSL commands
-    full_commands.append(inference_command)
+
+    # Join inference_command into a single string for logging
+    inference_command_str = " ".join(inference_command)
+    logger.info(inference_command_str)
+
+    # Append the SadTalker command to the list of commands
+    full_commands.append(inference_command_str)
 
     try:
         # Execute the commands in a shell
