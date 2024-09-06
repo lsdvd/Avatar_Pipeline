@@ -6,6 +6,8 @@ from datetime import datetime
 from config_manager import config
 from logger import logger  # Import the logger
 import csv
+from typing import Tuple, Optional
+
 
 # CONSTANTS
 HOME_DIR = config.get("Paths", "HOME_DIR")
@@ -344,7 +346,48 @@ def get_input_image_path(input_dir):
     logger.info(f"Input image file: {image_path}")
     return True, image_path
 
+def get_file_paths(input_dir: str) -> Tuple[str, str]:
+    """
+    Get the paths for input audio and image files, using sample files if necessary.
 
+    Args:
+    input_dir (str): The directory to search for input files.
+
+    Returns:
+    Tuple[str, str]: A tuple containing the paths to the audio and image files.
+    """
+    audio_success, input_audio_path = get_input_audio_path(input_dir)
+    image_success, input_image_path = get_input_image_path(input_dir)
+
+    if not (audio_success and image_success):
+        missing = []
+        if not audio_success:
+            missing.append("audio")
+        if not image_success:
+            missing.append("image")
+        
+        print(f"Missing input files for {' and '.join(missing)}.")
+        selection = input("Do you want to use sample files? (y/n): ")
+        
+        if selection.lower() == 'y':
+            if not audio_success:
+                sample_audio_src = os.path.join(input_dir, "samples", "sample_audio_12s.wav")
+                input_audio_path = os.path.join(input_dir, "sample_audio_12s.wav")
+                shutil.copy(sample_audio_src, input_audio_path)
+                logger.info(f"Copied sample audio file to: {input_audio_path}")
+
+            if not image_success:
+                sample_image_src = os.path.join(input_dir, "samples", "sample_image.jpg")
+                input_image_path = os.path.join(input_dir, "sample_image.jpg")
+                shutil.copy(sample_image_src, input_image_path)
+                logger.info(f"Copied sample image file to: {input_image_path}")
+
+            logger.info(f"Using sample files: Audio: {input_audio_path}, Image: {input_image_path}")
+        else:
+            logger.error("Failed to get input audio or image path")
+            raise FileNotFoundError("Required input files are missing and user declined to use sample files.")
+
+    return input_audio_path, input_image_path
 
 def cleanup_completed_files(source_dir):
     # Create a 'completed' subdirectory in the source directory

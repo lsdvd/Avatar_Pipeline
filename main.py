@@ -43,14 +43,8 @@ def main():
     # process mp3 to wav
     helpers.process_audio(input_dir)
 
-    # get input audio path
-    get_input_audio_success, input_audio_path = helpers.get_input_audio_path(input_dir)
-    # get input image path
-    get_input_image_success, input_image_path = helpers.get_input_image_path(input_dir)
+    input_audio_path, input_image_path = helpers.get_file_paths(input_dir)
 
-    if not (get_input_audio_success and get_input_image_success):
-        logger.error("Failed to get input audio or image path")
-        sys.exit(1)
 
     # Run SadTalker
     sadTalker_success, sadTalker_output = runSadTalker.run_sadtalker(sadTalker_dir, input_audio_path, output_path=inter_dir)

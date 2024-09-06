@@ -24,6 +24,7 @@ temp/
 !/input/samples/
 !/input/samples/sample_image.jpg
 !/input/samples/sample_audio_12s.mp3
+!/input/samples/sample_audio_12s.wav
 
 # Ignore Windows Zone.Identifier files
 *Zone.Identifier
