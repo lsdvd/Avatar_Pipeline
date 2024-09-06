@@ -27,3 +27,4 @@ temp/
 
 # Ignore Windows Zone.Identifier files
 *Zone.Identifier
+__pycache__/
