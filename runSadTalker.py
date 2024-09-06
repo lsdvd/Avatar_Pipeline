@@ -38,7 +38,7 @@ def run_sadtalker(sadTalker_dir, input_audio_path, image_path=TEMPLATE_IMAGE_PAT
     # get command for setting cuda env
     cuda_env_command = helpers.get_cuda_env_path()
 
-    full_commands = ["source ~/miniconda3/etc/profile.d/conda.sh", 
+    full_commands = [helpers.get_conda_source_command(), 
                      cuda_env_command[0], cuda_env_command[1], 
                      f"cd {sadTalker_dir}","pwd", "conda activate sadtalker",  "nvcc --version"]
 

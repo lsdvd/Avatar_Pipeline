@@ -16,7 +16,7 @@ def run_liveportrait(root_dir, input_image_path, input_video_path, output_dir):
     # get command for setting cuda env
     cuda_env_command = helpers.get_cuda_env_path()
 
-    full_commands = ["source ~/miniconda3/etc/profile.d/conda.sh", 
+    full_commands = [helpers.get_conda_source_command(), 
                      cuda_env_command[0], cuda_env_command[1], 
                      f"cd {root_dir}", "conda activate liveportrait",  "nvcc --version"]
 

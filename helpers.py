@@ -394,3 +394,23 @@ def save_to_output_file(file_paths, output_file):
     except IOError as e:
         logger.error(f"Error saving file paths: {e}")
 
+def get_conda_source_command():
+    """
+    Returns the command to source the conda.sh script dynamically.
+
+    :return: A string containing the command to source conda.sh.
+    """
+    try:
+        # Run the command to find the path to conda.sh
+        result = subprocess.run(
+            "realpath $(dirname $(which conda))/../etc/profile.d/conda.sh",
+            shell=True, check=True, capture_output=True, text=True
+        )
+
+        # Get the absolute path to conda.sh
+        conda_sh_path = result.stdout.strip()
+
+        # Return the full source command
+        return f"source {conda_sh_path}"
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Failed to find the conda.sh path: {e}")
