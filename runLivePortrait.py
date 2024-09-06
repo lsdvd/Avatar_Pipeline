@@ -84,8 +84,16 @@ def get_output_video_path(output_dir, s_filename, d_filename):
             if file.endswith('_concat.mp4'):
                 concat_dir = os.path.join(output_dir, 'concat')
                 os.makedirs(concat_dir, exist_ok=True)
-                shutil.move(file, concat_dir)
-                logger.info(f"Moved file to: {os.path.join(concat_dir, os.path.basename(file))}")
+                
+                # Generate new filename with datetime
+                now = datetime.now()
+                date_time = now.strftime("%Y%m%d_%H%M%S")
+                new_filename = f"{os.path.splitext(os.path.basename(file))[0]}_{date_time}.mp4"
+                
+                # Move and rename the file
+                new_file_path = os.path.join(concat_dir, new_filename)
+                shutil.move(file, new_file_path)
+                logger.info(f"Moved and renamed file to: {new_file_path}")
 
         files = sorted(glob.glob(os.path.join(output_dir, '*')), key=os.path.getmtime, reverse=True)
         logger.info(f"Files(2) in output directory: {files}")
